@@ -17,10 +17,17 @@ namespace ChannelMap
 
 		static void Main(string[] args)
 		{
-			if(args.Length == 1)
-				new Program().MainAsync(args[0]).GetAwaiter().GetResult();
-			else
+			string token = "";
+			if(!(args.Length == 1)) { 
 				Console.WriteLine("Usage: dotnet ChannelMap [Token]");
+				Console.WriteLine("Enter Bot Token");
+				token = Console.ReadLine();
+			}
+			else {
+				token = args[0];
+			}
+
+			new Program().MainAsync(token).GetAwaiter().GetResult();
 		}
 
 		public async Task MainAsync(string token)
@@ -47,9 +54,9 @@ namespace ChannelMap
 
 			}
 
-            Client = new DiscordSocketClient(
-             new DiscordSocketConfig() {
-                 LogLevel = LogSeverity.Info
+			Client = new DiscordSocketClient(
+			 new DiscordSocketConfig() {
+				 LogLevel = LogSeverity.Info
 			 });
 
 			try {
@@ -57,16 +64,18 @@ namespace ChannelMap
 				await Client.StartAsync();
 			}
 			catch(Exception ex) {
-				Console.WriteLine(ex.Message);
+				Console.WriteLine(ex.Message+"\nPress any key to exit");
+                Console.ReadKey();
+                Environment.Exit(1);
 			};
 
 			Client.UserVoiceStateUpdated += VoiceStateUpdated;
 			Client.JoinedGuild += JoinGuild;
-            Client.Log += (LogMessage message) =>
-            {
-                Console.WriteLine($"{DateTime.Now.ToString("[MM/dd/yyyy HH:mm]")} {message.Source}: {message.Message}");
-                return Task.CompletedTask;
-            };
+			Client.Log += (LogMessage message) =>
+			{
+				Console.WriteLine($"{DateTime.Now.ToString("[MM/dd/yyyy HH:mm]")} {message.Source}: {message.Message}");
+				return Task.CompletedTask;
+			};
 			await Task.Delay(-1);
 		}
 

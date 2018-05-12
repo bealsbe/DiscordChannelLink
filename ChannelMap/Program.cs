@@ -117,9 +117,7 @@ namespace ChannelMap
             dbConnection.Close();
 
             OverwritePermissions overwrite = new OverwritePermissions(readMessages: PermValue.Deny);
-            foreach(SocketUser user in voiceChannel.Guild.Users) {
-                await textChannel.AddPermissionOverwriteAsync(user , overwrite);
-            }
+            await textChannel.AddPermissionOverwriteAsync(voiceChannel.Guild.EveryoneRole , overwrite);
 
         }
 

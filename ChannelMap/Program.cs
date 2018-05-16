@@ -181,10 +181,13 @@ namespace ChannelMap
         //updates channel permissions when a user leaves a voice channel
         public Task HandleDisconnect(SocketUser socketUser , ISocketMessageChannel targetChannel)
         {
-            OverwritePermissions overwrite = new OverwritePermissions(readMessages: PermValue.Allow);
-            IGuildChannel textChannel = (IGuildChannel)targetChannel;
+            // Don't hide the channel for users that can manage messages
+            if (!((SocketGuildUser)socketUser).GuildPermissions.ManageMessages) {
+                OverwritePermissions overwrite = new OverwritePermissions(readMessages: PermValue.Deny);
+                IGuildChannel textChannel = (IGuildChannel)targetChannel;
+                textChannel.AddPermissionOverwriteAsync(socketUser , overwrite);
+            }
 
-            textChannel.AddPermissionOverwriteAsync(socketUser , overwrite);
             EmbedBuilder builder = new EmbedBuilder() {
                 Description = ":mute: " + socketUser.Mention + " has left the voice channel  " ,
                 Color = Color.Orange ,
